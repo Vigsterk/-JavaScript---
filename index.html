@@ -53,18 +53,22 @@
           <span class="menu__item-title">Поделиться</span>
         </li>
         <li class="menu__item tool share-tools">
-            <input class="menu__url" type="text" value="http://2mlfg4vp">
+            <input class="menu__url" type="text" value="">
             <input class="menu_copy" type="button" value="Копировать">
         </li>
       </ul>
 
-      <img class="current-image" src="./pic/image.jpg">
-      
+      <img class="current-image" src="">
+
       <div class="error" style="display: none;">
         <h4 class="error__header">Ошибка</h4>
         <p class="error__message">Неверный формат файла. Пожалуйста, выберите изображение в формате .jpg или .png.</p>
       </div>
-      
+      <div class="error" id="repeat-download" style="display: none;">
+        <h4 class="error__header">Ошибка</h4>
+        <p class="error__message">Чтобы загрузить новое изображение, пожалуйста, воспользуйтесь пунктом <<Загрузить новое>> в меню.</p>
+      </div>
+
       <div class="image-loader" style="display: none;">
         <div class="loader">
           <span></span>
@@ -74,8 +78,8 @@
           <span></span>
         </div>
         <p class="image-loader__message">Загружаю изображение...</p>
-      </div>      
-      
+      </div>
+
       <form class="comments__form">
         <span class="comments__marker"></span><input type="checkbox" class="comments__marker-checkbox">
         <div class="comments__body">
@@ -98,8 +102,8 @@
               <span></span>
               <span></span>
               <span></span>
-            </div>            
-          </div>          
+            </div>
+          </div>
           <textarea class="comments__input" type="text" placeholder="Напишите ответ..."></textarea>
           <input class="comments__close" type="button" value="Закрыть">
           <input class="comments__submit" type="submit" value="Отправить">
