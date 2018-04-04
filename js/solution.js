@@ -1,14 +1,31 @@
-'use strict';
+const wrap = document.querySelector('.wrap');
+const menu = document.querySelector('.menu');
+const comments = document.querySelector('.comments');
+const commentsEl = document.querySelector('.comments-tools');
+const commentsChange = document.querySelector('.comments-tools');
+const draw = document.querySelector('.draw');
+const drawEl = document.querySelector('.draw-tools');
+const eraserEl = document.querySelector('.menu__eraser');
+const share = document.querySelector('.share');
+const shareEl = document.querySelector('.share-tools');
+const copyButton = document.querySelector('.menu_copy');
+const burger = document.querySelector('.burger');
+const newPic = document.querySelector('.new');
+const img = document.querySelector('.current-image');
 
-const wrap = document.getElementsByClassName('wrap')[0];
-const menu = document.getElementsByClassName('menu')[0];
+document.addEventListener('DOMContentLoaded', function() {
+  burger.style.display = 'none';
+  menu.style.display = 'inline-block';
+  share.style.display = 'none';
+  comments.style.display = 'none';
+  draw.style.display = 'none';
+});
+
 menu.setAttribute('draggable', true);
-
 menu.addEventListener('mousedown', (e) => {
     if (e.which != 1) {
       return;
     }
-
   const elem = e.target.closest('.drag');
   if (!elem) return;
 
@@ -69,20 +86,10 @@ menu.addEventListener('mousedown', (e) => {
   }
 });
 
-const menuState = (eventent) => {
-  menu.dataset.state = 'initial';
-};
-document.addEventListener('DOMContentLoaded', menuState);
-
-const hamburger = document.querySelector('li.menu__item.burger');
-hamburger.addEventListener('click', hamburgerFunc)
-hamburger.style.display = 'none'
-
-
 // Кнопка загрузки файла
 const loadData = document.createElement('input');
-loadData.setAttribute('type', 'file');
-loadData.setAttribute('accept', 'image/jpeg, image/png')
+loadData.type = 'file';
+loadData.accept = '.jpg, .png'
 const newFileBtn = document.getElementsByClassName('new')[0];
 newFileBtn.appendChild(loadData);
 loadData.style.position = 'absolute';
@@ -104,29 +111,31 @@ newDropZone.style.height = '100vh';
 newDropZone.style.display = 'flex';
 newDropZone.style.flexDirection = 'row';
 
+
 const imgLoader = document.getElementsByClassName('image-loader')[0];
 const dropFiles = document.getElementById('dropZone');
 const errorMsg = document.getElementsByClassName('error')[0];
+const repeatDownload = document.querySelector('#repeat-download');
+errorMsg.style.backgroundColor = '#707885';
 dropFiles.addEventListener('drop', onFilesDrop);
-dropFiles.addEventListener('dragover', eventent => eventent.prevententDefault());
-function onFilesDrop(eventent) {
-  eventent.prevententDefault();
-	const dropFilesArr = Array.from(eventent.dataTransfer.files);
+dropFiles.addEventListener('dragover', event => event.preventDefault());
+
+function onFilesDrop(event) {
+  event.preventDefault();
+	const dropFilesArr = Array.from(event.dataTransfer.files);
   const checkDrop = dropFilesArr.forEach(function(elem){
     //  console.log (elem.type)
       if (elem.type == 'image/jpeg' || elem.type == 'image/png'){
-      	upload(dropFilesArr,'https://neto-api.herokuapp.com/pic/');
-        errorMsg.style.display = 'none';
-      } else {
-        errorMsg.style.display = 'block';
+        upload(dropFilesArr,'https://neto-api.herokuapp.com/pic/');
+          errorMsg.style.display = 'none'
+        } else {
+          errorMsg.style.display = 'block';
+        }
       }
-
-  })
-}
+    )}
 
 // Отправка изображения на сервер
 const xhr = new XMLHttpRequest();
-
 function upload(files, url) {
 console.log(files.type)
 const formData = new FormData();
@@ -140,12 +149,24 @@ xhr.onload = function() {
   const response = JSON.parse(xhr.responseText);
   console.log(response);
   const imgUrl = JSON.parse(xhr.responseText).url;
-  const img = document.querySelector('.current-image');
   imgLoader.style.display = 'none'
   img.src = imgUrl;
   img.style.width = 'auto';
   img.style.height = '95%'
   const imgID = JSON.parse(xhr.responseText).id;
+
+  function defaultShareMode() {
+    burger.style.display = 'inline-block';
+    menu.style.display = 'inline-block';
+    newPic.style.display = 'none';
+    share.style.display = 'inline-block';
+    shareEl.style.display = 'inline-block';
+    comments.style.display = 'none';
+    commentsEl.style.display = 'none';
+    draw.style.display = 'none';
+    drawEl.style.display = 'none';
+  }
+  defaultShareMode()
 
   xhr.open('GET',url + imgID, true);
   xhr.onload = function() {
@@ -155,9 +176,6 @@ xhr.onload = function() {
   xhr.send(null);
 }
 xhr.send(formData);
-// Иницализация режима редактирования
-hamburger.style.display = 'inline-block'
-menu.dataset.state = 'default';
 }
 document.querySelector('input[type="file"]').addEventListener('change', function(e) {
     upload(this.files,'https://neto-api.herokuapp.com/pic/');
@@ -165,38 +183,60 @@ document.querySelector('input[type="file"]').addEventListener('change', function
 
 //Выпадающие блоки меню
 
-const comments = document.querySelector('li.menu__item.mode.comments')
-comments.addEventListener('click', selectedMode)
-
-const draw = document.querySelector('li.menu__item.mode.draw')
-draw.addEventListener('click', selectedMode)
-
-const share = document.querySelector('li.menu__item.mode.share')
-share.addEventListener('click', selectedMode)
-
-
-
-
-function selectedMode(eventent) {
-  const target = eventent.currentTarget;
-  target.dataset.state = target.dataset.state === 'selected' ? '' : 'selected';
-  target.parentElement.dataset.state = 'selected';
-  console.log(eventent.target);
+burger.addEventListener('click', mainMenuMode)
+function mainMenuMode(event){
+  burger.style.display = 'inline-block';
+  menu.style.display = 'inline-block';
+  newPic.style.display = 'inline-block';
+  share.style.display = 'inline-block';
+  shareEl.style.display = 'none';
+  comments.style.display = 'inline-block';
+  commentsEl.style.display = 'none';
+  draw.style.display = 'inline-block';
+  drawEl.style.display = 'none';
 }
 
-function hamburgerFunc(eventent) {
-  menu.dataset.state = menu.dataset.state === 'selected' ? 'default' : 'selected';
+//Расшарить
+share.addEventListener('click', shareMode)
+function shareMode() {
+  burger.style.display = 'inline-block';
+  menu.style.display = 'inline-block';
+  newPic.style.display = 'none';
+  share.style.display = 'inline-block';
+  shareEl.style.display = 'inline-block';
+  comments.style.display = 'none';
+  commentsEl.style.display = 'none';
+  draw.style.display = 'none';
+  drawEl.style.display = 'none';
 }
 
+//Рисовалка
+draw.addEventListener('click', paintMode)
+function paintMode(event) {
+  burger.style.display = 'inline-block';
+  menu.style.display = 'inline-block';
+  newPic.style.display = 'none';
+  share.style.display = 'none';
+  shareEl.style.display = 'none';
+  comments.style.display = 'none';
+  commentsEl.style.display = 'none';
+  draw.style.display = 'inline-block';
+  drawEl.style.display = 'inline-block';
+};
 
+const div = document.createElement('div');
+    div.id = 'picture';
+    div.appendChild(img);
 const mask = document.createElement('canvas');
-wrap.appendChild(mask);
-mask.style.width = '50%'
-mask.style.height = '50vh'
-mask.style.position = 'absolute'
-mask.style.zIndex = '900'
+    mask.id = 'mask';
+    mask.style.position = 'absolute';
+    mask.style.width = '500px';
+    mask.style.height = '500px';
+    div.appendChild(mask);
+    wrap.appendChild(div);
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
+
 var rSize = 0.2;
 var myColor = 'red';
 
@@ -219,4 +259,19 @@ canvas.onmousemove = function (event){
   } }
 canvas.onmouseup = function(){
   ctx.drawing = false;
+}
+
+// коменты
+
+comments.addEventListener('click', commentsMode)
+function commentsMode(event) {
+  burger.style.display = 'inline-block';
+  menu.style.display = 'inline-block';
+  newPic.style.display = 'none';
+  share.style.display = 'none';
+  shareEl.style.display = 'none';
+  comments.style.display = 'inline-block';
+  commentsEl.style.display = 'inline-block';
+  draw.style.display = 'none';
+  drawEl.style.display = 'none';
 }
