@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
   draw.style.display = 'none';
   img.style.display = 'none';
   menu.style.left = '5%';
-  menu.style.top = '10%';
+  menu.style.top = '20%';
 });
 
 menu.setAttribute('draggable', true);
@@ -172,7 +172,10 @@ function upload(file) {
   img.src = data.url;
   window.imgID = data.id;
   img.style.display = 'block';
+  img.style.width = 'auto';
+  img.style.height = '100vh';
   shareMode()
+  resetCanvas();
   wsConnect();
  })
 .catch((error) => {
@@ -228,13 +231,14 @@ draw.addEventListener('click', paintMode)
 let div = document.createElement('div');
 div.id = 'picture';
 div.appendChild(img);
-let mask = document.createElement('img');
+let mask = document.createElement('canvas');
 mask.id = 'mask';
 mask.style.display = 'none';
+mask.style.position = 'relative';
 let paintMask = document.createElement('canvas');
 paintMask.id = 'paintMask';
 paintMask.style.display = 'none';
-paintMask.style.position = 'relative';
+paintMask.style.position = 'absolute';
 div.appendChild(mask);
 div.appendChild(paintMask);
 wrap.appendChild(div);
@@ -243,7 +247,8 @@ let curMouse = {x:0, y:0};
 
 function paintMode(event) {
   newDropZone.style.zIndex = 0;
-  img.style.zIndex = '';
+  mask.style.zIndex = 2;
+  paintMask.style.zIndex = 3;
   burger.style.display = 'inline-block';
   menu.style.display = 'inline-block';
   share.style.display = 'none';
@@ -254,7 +259,7 @@ function paintMode(event) {
   drawEl.style.display = 'inline-block';
   newPic.style.display = 'none';
   document.getElementById('paintMask').style.display = '';
-  document.getElementById('mask').style.display = 'none';
+  document.getElementById('mask').style.display = '';
   document.getElementById('mask').width = img.clientWidth;
   document.getElementById('mask').height = img.clientHeight;
   document.getElementById('paintMask').width = img.clientWidth;
@@ -289,7 +294,6 @@ function paintMode(event) {
     ctx.drawing = false;
     sendCanvas();
   }
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   const menuColor = document.getElementsByClassName('menu__color')
   for (let i = 0; i < menuColor.length; i++) {
@@ -309,12 +313,47 @@ function paintMode(event) {
   };
 };
 
+
+function resetCanvas() {
+  const resetMask = document.getElementById('mask');
+  let canvasContextReset = resetMask.getContext('2d');
+  canvasContextReset.clearRect(0, 0, resetMask.width, resetMask.height);
+
+  const resetPaintMask = document.getElementById('paintMask');
+  let canvasContextResetImg = resetPaintMask.getContext('2d');
+  canvasContextResetImg.clearRect(0, 0, resetPaintMask.width, resetPaintMask.height);
+};
+
+window.addEventListener('resize', resizeCanvas, false);
+
+function resizeCanvas() {
+  const paintMask = document.getElementById('paintMask');
+  let paintMaskContext = paintMask.getContext('2d');
+  paintMask.width = document.querySelector('.current-image').clientWidth;
+  paintMask.height = document.querySelector('.current-image').clientHeight;
+  paintMaskContext.clearRect(0, 0, mask.width, mask.height);
+  paintMaskContext.strokeStyle = 'green';
+  paintMaskContext.lineWidth = 5;
+};
+
+function resizeCanvasToDisplaySize(canvas) {
+  const width = canvas.clientWidth;
+  const height = canvas.clientHeight;
+   if (canvas.width !== width || canvas.height !== height) {
+     canvas.width = width;
+     canvas.height = height;
+     return true;
+   }
+   return false;
+};
+
 const comments = document.querySelector('.comments');
 const commentsEl = document.querySelector('.comments-tools');
 const commentsOn = document.querySelector('.menu__toggle');
 
 comments.addEventListener('click', commentsMode)
 function commentsMode(event) {
+  paintMask.style.zIndex = 0;
   burger.style.display = 'inline-block';
   menu.style.display = 'inline-block';
   share.style.display = 'none';
@@ -324,15 +363,16 @@ function commentsMode(event) {
   draw.style.display = 'none';
   drawEl.style.display = 'none';
   newPic.style.display = 'none';
+  mask.style.display = 'block';
   document.getElementById('mask').width = img.clientWidth;
   document.getElementById('mask').height = img.clientHeight;
-  img.style.zIndex = 5;
+  paintMask.style.display = 'none';
   commentsToggle();
   console.log(`Текущий ID изображения:${window.imgID}`);
 };
 
 commentsEl.addEventListener('click', commentsToggle);
-img.addEventListener('click', commentAdd);
+mask.addEventListener('click', commentAdd);
 
 function commentsToggle (event) {
   if (commentsOn.checked) {
@@ -420,6 +460,7 @@ function commentAdd(event) {
   commentText.type = 'text';
   commentText.classList.add('comments__input');
   commentBody.appendChild(commentText);
+
   let sendButton = document.createElement('input');
   sendButton.type = 'button';
   sendButton.value = 'отправить';
@@ -481,6 +522,12 @@ function sendComment(data) {
 
 let commentsArr = document.getElementsByClassName('comments__form');
 
+function resetComment() {
+  let elemArr = Array.from(сommentsArr);
+  for(let i = 0; i < elemArr.length; i++) {
+    document.getElementById('picture').removeChild(elemArr[i]);
+  };
+};
 
 let websocket;
 function wsConnect() {
@@ -501,8 +548,7 @@ function wsConnect() {
       case 'pic':
         img.onload = function() {
           if (data.pic.mask) {
-            mask.src = data.url;
-            mask.style.display = 'inline-block';
+            placeMask(data.pic.mask);
           };
           if (data.pic.comments) {
             commentsLoad(data.pic.comments);
@@ -514,10 +560,7 @@ function wsConnect() {
         commentsToggle();
         break;
       case 'mask':
-        console.log('Размещение маски')
-        mask.src = data.url;
-        mask.style.display = 'inline-block';
-        mask.style.display = 'absolute';
+        placeMask(data.url)
         break;
     };
     console.log(data);
@@ -527,10 +570,22 @@ function wsConnect() {
   });
 };
 
+function placeMask(url) {
+  console.log('Размещение маски')
+  const mask = document.getElementById('mask');
+  let context = mask.getContext('2d');
+    context.clearRect(0, 0, mask.width, mask.height);
+  let image = new Image;
+  image.onload = function() {
+    context.drawImage(image,0,0);
+  };
+  image.src = url;
+};
+
 function sendCanvas() {
   console.log('Отправка рисунка')
-  let paintMask = document.getElementById('paintMask');
-  let imageData = paintMask.toDataURL('image/png');
+  let canvas = document.getElementById('paintMask');
+  let imageData = canvas.toDataURL('image/png');
   let byteArray = convertToBinary(imageData);
   websocket.send(byteArray.buffer);
 };

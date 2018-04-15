@@ -79,7 +79,6 @@ body {
   transform: translate(-50%, -50%);
   display: block;
   box-shadow: 0.1rem 0.17rem 1rem #000000;
-  z-index: 0;
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~ иконки на панели ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -341,12 +340,13 @@ body {
   transform: translate(-50%, -50%);
   display: block;
 }
-#drawPic {
+#paintMask {
   left:0px;
   top:0px;
-  position: relative;
+  position: absolute;
 }
 #mask {
+  position: absolute;
   left: 0px;
   top: 0px;
 }
