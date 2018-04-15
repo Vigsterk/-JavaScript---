@@ -407,22 +407,27 @@ function commentAdd(event) {
   form.classList.add('comments__form');
   form.classList.add('addForm');
   form.style.zIndex = 50;
+
   let marker = document.createElement('span');
   marker.classList.add('comments__marker');
   form.appendChild(marker);
+
   let check = document.createElement('input');
   check.type = 'checkbox';
   check.classList.add('comments__marker-checkbox');
   check.checked = true;
   check.disabled = true;
   form.appendChild(check);
+
   let commentBody = document.createElement('div');
   commentBody.classList.add('comments__body');
   form.appendChild(commentBody);
+
   let commentText = document.createElement('textarea');
   commentText.type = 'text';
   commentText.classList.add('comments__input');
   commentBody.appendChild(commentText);
+
   let sendButton = document.createElement('input');
   sendButton.type = 'button';
   sendButton.value = 'отправить';
@@ -483,7 +488,6 @@ function sendComment(data) {
 }
 
 let commentsArr = document.getElementsByClassName('comments__form');
-
 
 let websocket;
 function wsConnect() {
