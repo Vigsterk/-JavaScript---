@@ -234,7 +234,6 @@ mask.style.display = 'none';
 let paintMask = document.createElement('canvas');
 paintMask.id = 'paintMask';
 paintMask.style.display = 'none';
-paintMask.style.position = 'relative';
 div.appendChild(mask);
 div.appendChild(paintMask);
 wrap.appendChild(div);
@@ -253,8 +252,9 @@ function paintMode(event) {
   draw.style.display = 'inline-block';
   drawEl.style.display = 'inline-block';
   newPic.style.display = 'none';
+  document.getElementById('paintMask').style.position = 'relative';
   document.getElementById('paintMask').style.display = '';
-  document.getElementById('mask').style.display = 'none';
+  document.getElementById('mask').style.position = 'absolute';
   document.getElementById('mask').width = img.clientWidth;
   document.getElementById('mask').height = img.clientHeight;
   document.getElementById('paintMask').width = img.clientWidth;
@@ -324,6 +324,9 @@ function commentsMode(event) {
   draw.style.display = 'none';
   drawEl.style.display = 'none';
   newPic.style.display = 'none';
+  mask.style.position = 'relative';
+  mask.style.display = 'block';
+  paintMask.style.display = 'none';
   document.getElementById('mask').width = img.clientWidth;
   document.getElementById('mask').height = img.clientHeight;
   img.style.zIndex = 5;
