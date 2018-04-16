@@ -11,13 +11,24 @@ document.addEventListener('DOMContentLoaded', function() {
   img.style.display = 'none';
   menu.style.left = '5%';
   menu.style.top = '10%';
-  let picHref = window.location.href;
-  let imgID = picHref.substring(picHref.indexOf('?id=') + 4);
+
+  let imgID = getIdFromUrl('id')
   if (imgID) {
   window.imgID = imgID;
   wsConnect();
 };
 });
+
+function getIdFromUrl(name) {
+  let imgHref = window.location.href;
+  let regex = new RegExp("[?]" + name + "(=([^&#]*)|&|#|$)");
+  let results = regex.exec(imgHref);
+  if (!results)
+    return null;
+  if (!results[2])
+    return '';
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+};
 
 menu.setAttribute('draggable', true);
 menu.addEventListener('mousedown', (e) => {
@@ -331,15 +342,14 @@ function commentsMode(event) {
   mask.style.position = 'relative';
   mask.style.display = 'block';
   paintMask.style.display = 'none';
-  document.getElementById('mask').width = img.clientWidth;
-  document.getElementById('mask').height = img.clientHeight;
   img.style.zIndex = 5;
   commentsToggle();
   console.log(`Текущий ID изображения:${window.imgID}`);
+  commentsEl.addEventListener('click', commentsToggle);
+  img.addEventListener('click', commentAdd);
 };
 
-commentsEl.addEventListener('click', commentsToggle);
-img.addEventListener('click', commentAdd);
+img.removeEventListener('click', commentAdd);
 
 function commentsToggle (event) {
   if (commentsOn.checked) {
@@ -351,8 +361,8 @@ function commentsToggle (event) {
   };
 };
 
+const commentsForm = document.getElementsByClassName('comments__form');
 function commentsState(param) {
-  const commentsForm = document.getElementsByClassName('comments__form');
   for (let i = 0; i < commentsForm.length; i++) {
     commentsForm[i].style.display = param;
   };
@@ -360,11 +370,12 @@ function commentsState(param) {
 
 function commentsLoad(comments) {
   for (let comment in comments) {
-    let curComment = {
+    let loadedComment = {
       message: comments[comment].message,
       left: comments[comment].left,
-      top: comments[comment].top};
-    createComment(сomment);
+      top: comments[comment].top
+    };
+    createComment(loadedComment);
   };
 };
 
@@ -499,7 +510,7 @@ function wsConnect() {
   websocket.addEventListener('open', () => {
     document.querySelector('.menu__url').value = window.location.protocol+'//'+window.location.host + window.location.pathname+'?id='+ window.imgID;
     img.style.display = 'block';
-    shareMode()
+    shareMode();
     console.log('Вебсокет-соединение открыто');
   });
 
@@ -516,8 +527,9 @@ function wsConnect() {
       img.src = data.pic.url;
         img.onload = function() {
           if (data.pic.mask) {
-            mask.src = data.url;
-            mask.style.display = 'inline-block';
+            mask.src = data.pic.mask;
+            mask.style.position = 'relative';
+            mask.style.display = 'block';
           };
           if (data.pic.comments) {
             commentsLoad(data.pic.comments);
