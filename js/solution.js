@@ -11,6 +11,12 @@ document.addEventListener('DOMContentLoaded', function() {
   img.style.display = 'none';
   menu.style.left = '5%';
   menu.style.top = '10%';
+  let picHref = window.location.href;
+  let imgID = picHref.substring(picHref.indexOf('?id=') + 4);
+  if (imgID) {
+  window.imgID = imgID;
+  wsConnect();
+};
 });
 
 menu.setAttribute('draggable', true);
@@ -169,7 +175,6 @@ function upload(file) {
   img.removeAttribute('new')
   imgLoader.style.display = 'none'
   serverError.style.display = 'none'
-  img.src = data.url;
   window.imgID = data.id;
   img.style.display = 'block';
   shareMode()
@@ -216,7 +221,6 @@ function shareMode() {
   draw.style.display = 'none';
   drawEl.style.display = 'none';
   newPic.style.display = 'none';
-  document.querySelector('.menu__url').value = window.location.protocol+'//'+window.location.host + window.location.pathname+'?id='+ window.imgID;
 }
 
 const draw = document.querySelector('.draw');
@@ -493,6 +497,9 @@ let websocket;
 function wsConnect() {
   websocket = new WebSocket('wss://neto-api.herokuapp.com/pic/'+ window.imgID);
   websocket.addEventListener('open', () => {
+    document.querySelector('.menu__url').value = window.location.protocol+'//'+window.location.host + window.location.pathname+'?id='+ window.imgID;
+    img.style.display = 'block';
+    shareMode()
     console.log('Вебсокет-соединение открыто');
   });
 
@@ -506,6 +513,7 @@ function wsConnect() {
     let data = JSON.parse(event.data);
     switch (data.event) {
       case 'pic':
+      img.src = data.pic.url;
         img.onload = function() {
           if (data.pic.mask) {
             mask.src = data.url;
