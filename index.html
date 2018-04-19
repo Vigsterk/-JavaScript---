@@ -57,9 +57,32 @@
             <input class="menu_copy" type="button" value="Копировать">
         </li>
       </ul>
-
       <img class="current-image" src="">
+      <canvas id="paintMask" style="display: none;"></canvas>
+      <img id="mask" style="display: none;">
 
+      <form class="comments__form new_comment" style="z-index: 100">
+        <span class="comments__marker"></span><input type="checkbox" class="comments__marker-checkbox" checked>
+        <div class="comments__body">
+          <div class="comment">
+            <p class="comment__time"></p>
+            <p class="comment__message"></p>
+          </div>
+
+          <div class="comment comment_loader" style="display: none;">
+            <div class="loader">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <textarea class="comments__input" type="text" placeholder="Напишите ответ..."></textarea>
+          <input class="comments__close" type="button" value="Закрыть">
+          <input class="comments__submit" type="submit" value="Отправить">
+        </div>
+      </form>
       <div class="error" style="display: none;">
         <h4 class="error__header">Ошибка</h4>
         <p class="error__message">Неверный формат файла. Пожалуйста, выберите изображение в формате .jpg или .png.</p>
@@ -81,7 +104,6 @@
           <span></span>
           <span></span>
         </div>
-
         <p class="image-loader__message">Загружаю изображение...</p>
       </div>
     </div>
