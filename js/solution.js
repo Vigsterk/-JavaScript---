@@ -184,6 +184,7 @@ function upload(file) {
     .then((data) => {
       console.log(data);
       mask.src = '';
+      mask.style.display = 'none';
       img.removeAttribute('new');
       imgLoader.style.display = 'none';
       serverError.style.display = 'none';
@@ -559,7 +560,7 @@ function wsConnect() {
     switch (data.event) {
       case 'pic':
         img.src = data.pic.url;
-        resetComment();      
+        resetComment();
         img.onload = function() {
           if (data.pic.mask) {
             mask.src = data.pic.mask;
