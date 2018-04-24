@@ -2,6 +2,7 @@ const wrap = document.querySelector('.wrap');
 const menu = document.querySelector('.menu');
 const img = document.querySelector('.current-image');
 const newPic = document.querySelector('.new');
+
 document.addEventListener('DOMContentLoaded', function() {
   initialFormComment.style.display = 'none';
   newPic.style.display = 'inline-block';
@@ -58,7 +59,7 @@ menu.addEventListener('mousedown', (e) => {
     };
     if (e.pageY > limits.bottom) {
       newLocation.y = limits.bottom;
-    }  else if (e.pageY > limits.top) {
+    } else if (e.pageY > limits.top) {
       newLocation.y = e.pageY;
     };
     menu.style.left = newLocation.x - shiftX + 'px';
@@ -89,15 +90,15 @@ function relocationMenu(position, value) {
   let limitPos = wrap.offsetLeft + wrap.offsetWidth - menu.offsetWidth - 1;
   if (limitPos === parseInt(menu.style.left)) {
     menu.style.left = (parseInt(menu.style.left) - value) + 'px';
-  }
-  else if ((limitPos - value) < parseInt(menu.style.left)) {
+  } else if ((limitPos - value) < parseInt(menu.style.left)) {
     menu.style.left = (position - value) + 'px';
   };
 };
+
 const loadData = document.createElement('input');
   loadData.type = 'file';
   loadData.accept = '.jpg, .png';
-const newFileBtn = document.getElementsByClassName('new')[0];
+const newFileBtn = document.querySelector('.new');
   newFileBtn.appendChild(loadData);
   loadData.style.position = 'absolute';
   loadData.style.left = '0';
@@ -106,33 +107,26 @@ const newFileBtn = document.getElementsByClassName('new')[0];
   loadData.style.height = '100%';
   loadData.style.opacity = '0';
   loadData.style.cursor = 'pointer';
-document.querySelector('input[type="file"]').addEventListener('change', function(e) {
-  const inputFilesArr = Array.from(this.files);
-  const checkInput = inputFilesArr.forEach(function(elem) {
-    if (elem.type == 'image/jpeg' || elem.type == 'image/png') {
-      upload(inputFilesArr);
-      errorMsg.style.display = 'none';
-    } else {
-      errorMsg.style.display = 'block';
-      errorMsg.style.zIndex = 10;
-    };
+  document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+    const inputFilesArr = Array.from(this.files);
+    const checkInput = inputFilesArr.forEach(function(elem) {
+      if (elem.type == 'image/jpeg' || elem.type == 'image/png') {
+        upload(inputFilesArr);
+        errorMsg.style.display = 'none';
+      } else {
+        errorMsg.style.display = 'block';
+        errorMsg.style.zIndex = 10;
+      };
+    });
   });
-}, false);
+
 const newDropZone = document.createElement('div');
   newDropZone.setAttribute('id', 'dropZone');
-  newDropZone.style.top = '1px';
-  newDropZone.style.width = '100%';
-  newDropZone.style.height = '100vh';
-  newDropZone.style.display = 'flex';
-  newDropZone.style.flexDirection = 'row';
-  newDropZone.style.zIndex = 1;
   wrap.appendChild(newDropZone);
-const imgLoader = document.getElementsByClassName('image-loader')[0];
-const dropFiles = document.getElementById('dropZone');
-const errorMsg = document.getElementsByClassName('error')[0];
+const imgLoader = document.querySelector('.image-loader');
+const dropFiles = document.querySelector('#dropZone');
+const errorMsg = document.querySelector('.error');
 const repeatDownload = document.querySelector('#repeat-download');
-  errorMsg.style.backgroundColor = '#384654';
-  repeatDownload.style.backgroundColor = '#384654';
 dropFiles.addEventListener('drop', onFilesDrop);
 dropFiles.addEventListener('dragover', event => event.preventDefault());
 img.setAttribute('new', '');
@@ -146,29 +140,29 @@ function onFilesDrop(event) {
       if (img.hasAttribute('new')) {
         upload(dropFilesArr);
         errorMsg.style.display = 'none';
-      }
-      else {
+      } else {
         repeatDownload.style.display = 'inline-block';
         repeatDownload.style.zIndex = 10;
-      }
-    }
-    else {
+      };
+    } else {
       errorMsg.style.display = 'block';
       errorMsg.style.zIndex = 10;
-    }
-  })
-}
+    };
+});
+};
+
 const serverError = document.querySelector('#server-error');
 let imgID;
 
 function upload(file) {
-  repeatDownload.style.display = 'none'
+  repeatDownload.style.display = 'none';
   const formData = new FormData();
   for (var i = 0, file; file = file[i]; ++i) {
     formData.append('title', file.name);
     formData.append('image', file);
   }
   imgLoader.style.display = 'block'
+
   fetch('https://neto-api.herokuapp.com/pic', {
       method: 'POST',
       body: formData
@@ -197,7 +191,7 @@ function upload(file) {
       imgLoader.style.display = 'none';
       serverError.style.display = 'block';
     });
-}
+};
 const burger = document.querySelector('.burger');
 burger.addEventListener('click', burgerModeReplace);
 
@@ -205,16 +199,18 @@ function burgerModeReplace(event) {
   let burgerPos = wrap.offsetLeft + wrap.offsetWidth - menu.offsetWidth - 1;
   if (commentsEl.style.display === 'inline-block') {
     relocationMenu(burgerPos, 49);
-  }
-  else if (drawEl.style.display === 'inline-block') {
+  } else if (drawEl.style.display === 'inline-block') {
     relocationMenu(burgerPos, 67);
-  }
+  };
   mainMenuMode(event);
-}
+};
+
+function resetErrorMessage() {
+  errorMsg.style.display = 'none';
+  repeatDownload.style.display = 'none';
+};
 
 function mainMenuMode(event) {
-  errorMsg.style.display = 'none';
-  repeatDownload.style.display = 'none'
   newPic.style.display = 'inline-block';
   newDropZone.style.display = 'inline-block';
   burger.style.display = 'none';
@@ -228,6 +224,7 @@ function mainMenuMode(event) {
   paintMask.style.zIndex = 0;
   paintMask.style.display = 'none';
   createCommentClickCheck();
+  resetErrorMessage();
 }
 const imgUrl = document.querySelector('.menu__url');
 const copyUrlButton = document.querySelector('.menu_copy');
@@ -243,16 +240,13 @@ function startShareMode() {
   let sharePos = wrap.offsetLeft + wrap.offsetWidth - menu.offsetWidth - 1;
   if (newPic.style.display === 'inline-block' && share.style.display === 'none') {
     relocationMenu(sharePos, 567);
-  }
-  else {
+  } else {
     relocationMenu(sharePos, 189);
-  }
+  };
   shareMode(event);
-}
+};
 
 function shareMode(event) {
-  errorMsg.style.display = 'none';
-  repeatDownload.style.display = 'none'
   burger.style.display = 'inline-block';
   menu.style.display = 'inline-block';
   share.style.display = 'inline-block';
@@ -263,17 +257,15 @@ function shareMode(event) {
   drawEl.style.display = 'none';
   newPic.style.display = 'none';
   createCommentClickCheck();
+  resetErrorMessage();
 };
 const draw = document.querySelector('.draw');
 const drawEl = document.querySelector('.draw-tools');
 const eraserEl = document.querySelector('.menu__eraser');
-const canvas = document.getElementById('paintMask');
+const canvas = document.querySelector('#paintMask');
   draw.addEventListener('click', paintMode);
 
 function paintMode(event) {
-  errorMsg.style.display = 'none';
-  repeatDownload.style.display = 'none'
-  newDropZone.style.zIndex = 0;
   burger.style.display = 'inline-block';
   menu.style.display = 'inline-block';
   share.style.display = 'none';
@@ -286,7 +278,9 @@ function paintMode(event) {
   paintMask.style.zIndex = 1;
   paintMask.style.display = 'block';
   createCommentClickCheck();
+  resetErrorMessage();
   resizeCanvas();
+
   let initMouse = {
     x: 0,
     y: 0
@@ -308,7 +302,7 @@ function paintMode(event) {
     curMouse.y = event.offsetY;
     if (ctx.drawing) {
       ctx.beginPath();
-      ctx.lineJoin = 'round'
+      ctx.lineJoin = 'round';
       ctx.moveTo(initMouse.x, initMouse.y);
       ctx.lineTo(curMouse.x, curMouse.y);
       ctx.closePath();
@@ -343,6 +337,15 @@ function resizeCanvas() {
   canvas.width = mask.width = document.querySelector('.current-image').width;
   canvas.height = mask.height = document.querySelector('.current-image').height;
 };
+
+function sendCanvas() {
+  console.log('Отправка рисунка');
+  const paintMask = document.querySelector('#paintMask');
+  const imageData = paintMask.toDataURL('image/png');
+  const byteArray = convertToBinary(imageData);
+  websocket.send(byteArray.buffer);
+};
+
 const comments = document.querySelector('.comments');
 const commentsEl = document.querySelector('.comments-tools');
 const commentsOn = document.querySelector('.menu__toggle');
@@ -350,6 +353,8 @@ const initialFormComment = document.querySelector('.new_comment');
 comments.addEventListener('click', commentsMode);
 
 function commentsMode(event) {
+  errorMsg.style.display = 'none';
+  repeatDownload.style.display = 'none'
   burger.style.display = 'inline-block';
   menu.style.display = 'inline-block';
   share.style.display = 'none';
@@ -362,8 +367,8 @@ function commentsMode(event) {
   paintMask.style.display = 'none';
   paintMask.style.zIndex = 0;
   resizeCanvas();
+  resetErrorMessage();
   commentsToggle();
-  console.log(`Текущий ID изображения:${window.imgID}`);
   commentsEl.addEventListener('click', commentsToggle);
   if (mask.style.display == 'none') {
     img.addEventListener('click', commentAdd);
@@ -378,17 +383,16 @@ function createCommentClickCheck() {
   } else {
     mask.removeEventListener('click', commentAdd);
   };
-}
-commentsEl.addEventListener('click', commentsToggle);
+};
 
 function commentsToggle() {
   const commentsForm = wrap.querySelectorAll('[data-top]');
   for (let i = 0; i < commentsForm.length; i++) {
     if (document.querySelector('.menu__toggle').checked) {
-      console.log('Комментарии показаны')
+      console.log('Комментарии показаны');
       commentsForm[i].style.display = 'inline-block';
     } else {
-      console.log('Комментарии скрыты')
+      console.log('Комментарии скрыты');
       commentsForm[i].style.display = 'none';
     };
   };
@@ -518,6 +522,7 @@ function submitComment(event) {
 };
 
 function sendComment(data) {
+  console.log('Отправка комментария');
   initialFormComment.reset();
   const commentBody = `message=${encodeURIComponent(data.message)}&left=${encodeURIComponent(data.left)}&top=${encodeURIComponent(data.top)}`;
   fetch('https://neto-api.herokuapp.com/pic/' + window.imgID + '/comments', {
@@ -539,7 +544,21 @@ function sendComment(data) {
       console.log(error);
       alert('Ошибка при отправке комментария');
     });
-}
+};
+
+function convertToBinary(data) {
+  const marker = ';base64,';
+  let markerIndex = data.indexOf(marker) + marker.length;
+  let base64 = data.substring(markerIndex);
+  let raw = window.atob(base64);
+  let rawLength = raw.length;
+  let byteArray = new Uint8Array(new ArrayBuffer(rawLength));
+  for (let i = 0; i < rawLength; i++) {
+    byteArray[i] = raw.charCodeAt(i);
+  };
+  return byteArray;
+};
+
 let websocket;
 
 function wsConnect() {
@@ -577,7 +596,6 @@ function wsConnect() {
         renderComment(data.comment);
         break;
       case 'mask':
-        console.log('Размещение маски');
         mask.src = data.url;
         mask.style.display = 'inline-block';
         mask.style.display = 'absolute';
@@ -588,25 +606,4 @@ function wsConnect() {
   websocket.addEventListener('error', error => {
     console.log(`Произошла ошибка: ${error.data}`);
   });
-};
-
-function sendCanvas() {
-  console.log('Отправка рисунка');
-  const paintMask = document.getElementById('paintMask');
-  const imageData = paintMask.toDataURL('image/png');
-  const byteArray = convertToBinary(imageData);
-  websocket.send(byteArray.buffer);
-};
-
-function convertToBinary(data) {
-  const marker = ';base64,';
-  let markerIndex = data.indexOf(marker) + marker.length;
-  let base64 = data.substring(markerIndex);
-  let raw = window.atob(base64);
-  let rawLength = raw.length;
-  let byteArray = new Uint8Array(new ArrayBuffer(rawLength));
-  for (let i = 0; i < rawLength; i++) {
-    byteArray[i] = raw.charCodeAt(i);
-  };
-  return byteArray;
 };
