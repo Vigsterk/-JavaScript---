@@ -3,7 +3,7 @@ const menu = document.querySelector('.menu');
 const img = document.querySelector('.current-image');
 const newPic = document.querySelector('.new');
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   initialFormComment.style.display = 'none';
   newPic.style.display = 'inline-block';
   burger.style.display = 'none';
@@ -66,14 +66,14 @@ menu.addEventListener('mousedown', (e) => {
     menu.style.top = newLocation.y - shiftY + 'px';
     menu.style.marginRight = '-1px';
   };
-  document.onmousemove = function(e) {
+  document.onmousemove = function (e) {
     moveAt(e);
   };
-  menu.onmouseup = function() {
+  menu.onmouseup = function () {
     document.onmousemove = null;
     menu.onmouseup = null;
   };
-  menu.ondragstart = function() {
+  menu.ondragstart = function () {
     return false;
   };
 
@@ -107,9 +107,9 @@ const newFileBtn = document.querySelector('.new');
   loadData.style.height = '100%';
   loadData.style.opacity = '0';
   loadData.style.cursor = 'pointer';
-  document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+  document.querySelector('input[type="file"]').addEventListener('change', function (e) {
     const inputFilesArr = Array.from(this.files);
-    const checkInput = inputFilesArr.forEach(function(elem) {
+    const checkInput = inputFilesArr.forEach(function (elem) {
       if (elem.type == 'image/jpeg' || elem.type == 'image/png') {
         upload(inputFilesArr);
         errorMsg.style.display = 'none';
@@ -134,7 +134,7 @@ img.setAttribute('new', '');
 function onFilesDrop(event) {
   event.preventDefault();
   const dropFilesArr = Array.from(event.dataTransfer.files);
-  const checkDrop = dropFilesArr.forEach(function(elem) {
+  const checkDrop = dropFilesArr.forEach(function (elem) {
     console.log(`Загружаемый тип изображения: ${elem.type}`);
     if (elem.type == 'image/jpeg' || elem.type == 'image/png') {
       if (img.hasAttribute('new')) {
@@ -228,7 +228,7 @@ function mainMenuMode(event) {
 }
 const imgUrl = document.querySelector('.menu__url');
 const copyUrlButton = document.querySelector('.menu_copy');
-copyUrlButton.addEventListener('click', function() {
+copyUrlButton.addEventListener('click', function () {
   imgUrl.select();
   document.execCommand('copy');
 });
@@ -292,12 +292,12 @@ function paintMode(event) {
   const ctx = canvas.getContext('2d');
     ctx.strokeStyle = 'green';
     ctx.lineWidth = 5;
-  canvas.onmousedown = function(event) {
+  canvas.onmousedown = function (event) {
     initMouse.x = event.offsetX;
     initMouse.y = event.offsetY;
     ctx.drawing = true;
   }
-  canvas.onmousemove = function(event) {
+  canvas.onmousemove = function (event) {
     curMouse.x = event.offsetX;
     curMouse.y = event.offsetY;
     if (ctx.drawing) {
@@ -311,7 +311,7 @@ function paintMode(event) {
     initMouse.x = curMouse.x;
     initMouse.y = curMouse.y;
   }
-  canvas.onmouseup = function(event) {
+  canvas.onmouseup = function (event) {
     ctx.drawing = false;
     sendCanvas();
   }
@@ -407,7 +407,7 @@ function commentAdd(event) {
     initialFormMessage.focus();
   const initialFormCloseButton = initialFormComment.querySelector('.comments__close');
 
-  initialFormCloseButton.addEventListener('click', function() {
+  initialFormCloseButton.addEventListener('click', function () {
     initialFormComment.style.display = 'none';
   });
   initialFormComment.style.left = (event.offsetX + img.getBoundingClientRect().left) - 20 + 'px'
@@ -473,7 +473,7 @@ function createComment(comment) {
     commentMessage.setAttribute('style', 'white-space: pre;');
     commentMessage.textContent = comment.message;
   const closeButton = commentForm.querySelector('.comments__close');
-  closeButton.addEventListener('click', function() {
+  closeButton.addEventListener('click', function () {
     commentForm.querySelector('.comments__marker-checkbox').checked = false
   });
   wrap.appendChild(commentForm);
@@ -580,7 +580,7 @@ function wsConnect() {
       case 'pic':
         img.src = data.pic.url;
         resetComment();
-        img.onload = function() {
+        img.onload = function () {
           if (data.pic.mask) {
             mask.src = data.pic.mask;
             mask.style.display = 'inline-block';
