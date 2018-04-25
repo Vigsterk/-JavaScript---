@@ -593,6 +593,7 @@ function wsConnect() {
   });
   websocket.addEventListener('close', event => {
     alert('Соединение разорвано');
+    imgLoader.style.display = 'none';
     console.log('Вебсокет-соединение закрыто');
     console.log(event);
   });
