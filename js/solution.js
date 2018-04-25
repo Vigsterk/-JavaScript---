@@ -529,9 +529,8 @@ function renderCommentForm(loadForm, comment) {
 
 function resetComment() {
   const commentsArr = wrap.querySelectorAll('[data-top]');
-  const elemArr = Array.from(commentsArr);
-  for (let i = 0; i < elemArr.length; i++) {
-    wrap.removeChild(elemArr[i]);
+  for (let i = 0; i < commentsArr.length; i++) {
+    wrap.removeChild(commentsArr[i]);
   };
 };
 
