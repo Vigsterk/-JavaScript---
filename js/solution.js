@@ -1,4 +1,5 @@
 const wrap = document.querySelector('.wrap');
+const body = document.querySelector('body');
 const menu = document.querySelector('.menu');
 const img = document.querySelector('.current-image');
 const newPic = document.querySelector('.new');
@@ -11,8 +12,6 @@ document.addEventListener('DOMContentLoaded', function () {
   comments.style.display = 'none';
   draw.style.display = 'none';
   img.style.display = 'none';
-  menu.style.left = '5%';
-  menu.style.top = '10%';
   let imgID = getIdFromUrl('id');
   if (imgID) {
     window.imgID = imgID;
@@ -21,15 +20,17 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function getIdFromUrl(name) {
-  let imgHref = window.location.href;
-  let regex = new RegExp("[?]" + name + "(=([^&#]*)|&|#|$)");
-  let results = regex.exec(imgHref);
+  const imgHref = window.location.href;
+  const regex = new RegExp("[?]" + name + "(=([^&#]*)|&|#|$)");
+  const results = regex.exec(imgHref);
   if (!results)
     return null;
   if (!results[2])
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 };
+
+// Расположение блока меню
 menu.setAttribute('draggable', true);
 menu.addEventListener('mousedown', (e) => {
   if (e.which != 1) {
@@ -48,7 +49,7 @@ menu.addEventListener('mousedown', (e) => {
   };
 
   function moveAt(e) {
-    let newLocation = {
+    const newLocation = {
       x: limits.left,
       y: limits.top
     };
@@ -78,7 +79,7 @@ menu.addEventListener('mousedown', (e) => {
   };
 
   function getCoords(elem) {
-    let box = elem.getBoundingClientRect();
+    const box = elem.getBoundingClientRect();
     return {
       top: box.top + pageYOffset,
       left: box.left + pageXOffset
@@ -86,15 +87,28 @@ menu.addEventListener('mousedown', (e) => {
   };
 });
 
-function relocationMenu(position, value) {
-  let limitPos = wrap.offsetLeft + wrap.offsetWidth - menu.offsetWidth - 1;
-  if (limitPos === parseInt(menu.style.left)) {
-    menu.style.left = (parseInt(menu.style.left) - value) + 'px';
-  } else if ((limitPos - value) < parseInt(menu.style.left)) {
-    menu.style.left = (position - value) + 'px';
-  };
+window.addEventListener("resize", windowResize, false);
+
+function windowResize() {
+    console.log('Resize event');
+    resizeCanvas();
+    relocationMenu();
 };
 
+function relocationMenu(position, value) {
+  const limitPos = wrap.offsetLeft + wrap.offsetWidth - menu.offsetWidth - 1;
+  if (parseInt(menu.style.left) < 0) {
+    menu.style.left = '0px';
+  } else {
+      if (limitPos === parseInt(menu.style.left)) {
+        menu.style.left = (parseInt(menu.style.left) - value) + 'px';
+    } else if ((limitPos - value) < parseInt(menu.style.left)) {
+        menu.style.left = (position - value) + 'px';
+      };
+    };
+  };
+
+//Загрузка и проверка изображений
 const loadData = document.createElement('input');
   loadData.type = 'file';
   loadData.accept = '.jpg, .png';
@@ -107,7 +121,7 @@ const newFileBtn = document.querySelector('.new');
   loadData.style.height = '100%';
   loadData.style.opacity = '0';
   loadData.style.cursor = 'pointer';
-  document.querySelector('input[type="file"]').addEventListener('change', function (e) {
+  loadData.addEventListener('change', function (event) {
     const inputFilesArr = Array.from(this.files);
     const checkInput = inputFilesArr.forEach(function (elem) {
       if (elem.type == 'image/jpeg' || elem.type == 'image/png') {
@@ -120,11 +134,9 @@ const newFileBtn = document.querySelector('.new');
     });
   });
 
-const newDropZone = document.createElement('div');
-  newDropZone.setAttribute('id', 'dropZone');
-  wrap.appendChild(newDropZone);
+
 const imgLoader = document.querySelector('.image-loader');
-const dropFiles = document.querySelector('#dropZone');
+const dropFiles = document.querySelector('body');
 const errorMsg = document.querySelector('.error');
 const repeatDownload = document.querySelector('#repeat-download');
 dropFiles.addEventListener('drop', onFilesDrop);
@@ -151,6 +163,12 @@ function onFilesDrop(event) {
 });
 };
 
+function resetErrorMessage() {
+  errorMsg.style.display = 'none';
+  repeatDownload.style.display = 'none';
+};
+
+//Первичная загрузка на сервер
 const serverError = document.querySelector('#server-error');
 let imgID;
 
@@ -162,6 +180,7 @@ function upload(file) {
     formData.append('image', file);
   }
   imgLoader.style.display = 'block'
+  serverError.style.display = 'none';
 
   fetch('https://neto-api.herokuapp.com/pic', {
       method: 'POST',
@@ -180,11 +199,9 @@ function upload(file) {
       mask.src = '';
       mask.style.display = 'none';
       img.removeAttribute('new');
-      imgLoader.style.display = 'none';
       serverError.style.display = 'none';
       window.imgID = data.id;
       img.style.display = 'block';
-      startShareMode();
       wsConnect();
     })
     .catch((error) => {
@@ -192,11 +209,13 @@ function upload(file) {
       serverError.style.display = 'block';
     });
 };
+
+//Режим "Основное меню"
 const burger = document.querySelector('.burger');
 burger.addEventListener('click', burgerModeReplace);
 
 function burgerModeReplace(event) {
-  let burgerPos = wrap.offsetLeft + wrap.offsetWidth - menu.offsetWidth - 1;
+  const burgerPos = wrap.offsetLeft + wrap.offsetWidth - menu.offsetWidth - 1;
   if (commentsEl.style.display === 'inline-block') {
     relocationMenu(burgerPos, 49);
   } else if (drawEl.style.display === 'inline-block') {
@@ -205,14 +224,8 @@ function burgerModeReplace(event) {
   mainMenuMode(event);
 };
 
-function resetErrorMessage() {
-  errorMsg.style.display = 'none';
-  repeatDownload.style.display = 'none';
-};
-
 function mainMenuMode(event) {
   newPic.style.display = 'inline-block';
-  newDropZone.style.display = 'inline-block';
   burger.style.display = 'none';
   menu.style.display = 'inline-block';
   share.style.display = 'inline-block';
@@ -226,6 +239,8 @@ function mainMenuMode(event) {
   createCommentClickCheck();
   resetErrorMessage();
 }
+
+// Режим "Поделится"
 const imgUrl = document.querySelector('.menu__url');
 const copyUrlButton = document.querySelector('.menu_copy');
 copyUrlButton.addEventListener('click', function () {
@@ -237,7 +252,7 @@ const shareEl = document.querySelector('.share-tools');
   share.addEventListener('click', startShareMode);
 
 function startShareMode() {
-  let sharePos = wrap.offsetLeft + wrap.offsetWidth - menu.offsetWidth - 1;
+  const sharePos = wrap.offsetLeft + wrap.offsetWidth - menu.offsetWidth - 1;
   if (newPic.style.display === 'inline-block' && share.style.display === 'none') {
     relocationMenu(sharePos, 567);
   } else {
@@ -259,6 +274,8 @@ function shareMode(event) {
   createCommentClickCheck();
   resetErrorMessage();
 };
+
+//Режим "Рисование"
 const draw = document.querySelector('.draw');
 const drawEl = document.querySelector('.draw-tools');
 const eraserEl = document.querySelector('.menu__eraser');
@@ -281,11 +298,11 @@ function paintMode(event) {
   resetErrorMessage();
   resizeCanvas();
 
-  let initMouse = {
+  const initMouse = {
     x: 0,
     y: 0
   };
-  let curMouse = {
+  const curMouse = {
     x: 0,
     y: 0
   };
@@ -346,10 +363,26 @@ function sendCanvas() {
   websocket.send(byteArray.buffer);
 };
 
+//Преобразование canvas в бинарный формат
+function convertToBinary(data) {
+  const marker = ';base64,';
+  const markerIndex = data.indexOf(marker) + marker.length;
+  const base64 = data.substring(markerIndex);
+  const raw = window.atob(base64);
+  const rawLength = raw.length;
+  const byteArray = new Uint8Array(new ArrayBuffer(rawLength));
+  for (let i = 0; i < rawLength; i++) {
+    byteArray[i] = raw.charCodeAt(i);
+  };
+  return byteArray;
+};
+
+//Режим "Комментирования"
 const comments = document.querySelector('.comments');
 const commentsEl = document.querySelector('.comments-tools');
 const commentsOn = document.querySelector('.menu__toggle');
 const initialFormComment = document.querySelector('.new_comment');
+const initialFormCommentLoader = initialFormComment.querySelector('.comment_loader');
 comments.addEventListener('click', commentsMode);
 
 function commentsMode(event) {
@@ -399,17 +432,15 @@ function commentsToggle() {
 };
 
 function commentAdd(event) {
-  const initialFormCommentLoader = initialFormComment.querySelector('.comment_loader');
-    initialFormCommentLoader.style.display = 'none';
   const initialFormMarker = initialFormComment.querySelector('.comments__marker-checkbox');
     initialFormMarker.checked = true;
   const initialFormMessage = initialFormComment.querySelector('.comments__input');
     initialFormMessage.focus();
   const initialFormCloseButton = initialFormComment.querySelector('.comments__close');
-
-  initialFormCloseButton.addEventListener('click', function () {
-    initialFormComment.style.display = 'none';
-  });
+    initialFormCloseButton.addEventListener('click', function () {
+      initialFormComment.style.display = 'none';
+    });
+  initialFormCommentLoader.style.display = 'none';
   initialFormComment.style.left = (event.offsetX + img.getBoundingClientRect().left) - 20 + 'px'
   initialFormComment.style.top = (event.offsetY + img.getBoundingClientRect().top) - 16 + 'px';
   initialFormComment.style.display = 'inline-block';
@@ -428,9 +459,10 @@ function commentsLoad(comments) {
 };
 
 function renderComment(loadedComment) {
+  initialFormComment.style.display = 'none';
   const loadForm = document.querySelector(`.comments__form[data-left="${loadedComment.left}"][data-top="${loadedComment.top}"]`);
   if (loadForm) {
-    let commentLoader = loadForm.querySelector('.comment_loader');
+    const commentLoader = loadForm.querySelector('.comment_loader');
       commentLoader.style.display = 'none';
     renderCommentForm(loadForm, loadedComment);
   } else {
@@ -461,7 +493,7 @@ function createComment(comment) {
     marker.checked = true;
     marker.disabled = false;
     marker.addEventListener('click', event => {
-      let commentsForm = document.querySelectorAll('.comments__form');
+      const commentsForm = document.querySelectorAll('.comments__form');
       for (let i = 0; i < commentsForm.length; i++) {
         commentsForm[i].style.zIndex = '5';
       };
@@ -470,7 +502,7 @@ function createComment(comment) {
   const commentDateTime = commentForm.querySelector('.comment__time');
     commentDateTime.textContent = getMessageTime();
   const commentMessage = commentForm.querySelector('.comment__message');
-    commentMessage.setAttribute('style', 'white-space: pre;');
+    commentMessage.style.whiteSpace = 'pre';
     commentMessage.textContent = comment.message;
   const closeButton = commentForm.querySelector('.comments__close');
   closeButton.addEventListener('click', function () {
@@ -488,7 +520,7 @@ function renderCommentForm(loadForm, comment) {
   const commentDateTime = commentForm.querySelector('.comment__time');
     commentDateTime.textContent = getMessageTime();
   const commentMessage = commentForm.querySelector('.comment__message');
-    commentMessage.setAttribute('style', 'white-space: pre;');
+    commentMessage.style.whiteSpace = 'pre';
     commentMessage.textContent = comment.message;
   loadFormCommentsBody.insertBefore(commentForm, loadFormLoader);
   loadForm.reset();
@@ -502,11 +534,14 @@ function resetComment() {
     wrap.removeChild(elemArr[i]);
   };
 };
+
+//Отправка комментария
 wrap.addEventListener('submit', submitComment);
 
 function submitComment(event) {
   event.preventDefault();
-  initialFormComment.style.display = 'none';
+  initialFormComment.style.display = 'inline-block';
+  initialFormCommentLoader.style.display = 'inline-block';
   const messageForm = event.target.querySelector('.comments__input');
   const commentData = {
     'message': messageForm.value,
@@ -546,19 +581,7 @@ function sendComment(data) {
     });
 };
 
-function convertToBinary(data) {
-  const marker = ';base64,';
-  let markerIndex = data.indexOf(marker) + marker.length;
-  let base64 = data.substring(markerIndex);
-  let raw = window.atob(base64);
-  let rawLength = raw.length;
-  let byteArray = new Uint8Array(new ArrayBuffer(rawLength));
-  for (let i = 0; i < rawLength; i++) {
-    byteArray[i] = raw.charCodeAt(i);
-  };
-  return byteArray;
-};
-
+//Инициализация вебсокет-соединения
 let websocket;
 
 function wsConnect() {
@@ -575,10 +598,12 @@ function wsConnect() {
     console.log(event);
   });
   websocket.addEventListener('message', event => {
-    let data = JSON.parse(event.data);
+    const data = JSON.parse(event.data);
     switch (data.event) {
       case 'pic':
+        imgLoader.style.display = 'none';
         img.src = data.pic.url;
+        img.removeAttribute('new');
         resetComment();
         img.onload = function () {
           if (data.pic.mask) {
