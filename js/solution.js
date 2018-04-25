@@ -221,10 +221,10 @@ function burgerModeReplace(event) {
   } else if (drawEl.style.display === 'inline-block') {
     relocationMenu(burgerPos, 67);
   };
-  mainMenuMode(event);
+  mainMenuMode();
 };
 
-function mainMenuMode(event) {
+function mainMenuMode() {
   newPic.style.display = 'inline-block';
   burger.style.display = 'none';
   menu.style.display = 'inline-block';
@@ -258,10 +258,10 @@ function startShareMode() {
   } else {
     relocationMenu(sharePos, 189);
   };
-  shareMode(event);
+  shareMode();
 };
 
-function shareMode(event) {
+function shareMode() {
   burger.style.display = 'inline-block';
   menu.style.display = 'inline-block';
   share.style.display = 'inline-block';
@@ -282,7 +282,7 @@ const eraserEl = document.querySelector('.menu__eraser');
 const canvas = document.querySelector('#paintMask');
   draw.addEventListener('click', paintMode);
 
-function paintMode(event) {
+function paintMode() {
   burger.style.display = 'inline-block';
   menu.style.display = 'inline-block';
   share.style.display = 'none';
@@ -385,7 +385,7 @@ const initialFormComment = document.querySelector('.new_comment');
 const initialFormCommentLoader = initialFormComment.querySelector('.comment_loader');
 comments.addEventListener('click', commentsMode);
 
-function commentsMode(event) {
+function commentsMode() {
   errorMsg.style.display = 'none';
   repeatDownload.style.display = 'none'
   burger.style.display = 'inline-block';
