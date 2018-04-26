@@ -3,6 +3,7 @@ const body = document.querySelector('body');
 const menu = document.querySelector('.menu');
 const img = document.querySelector('.current-image');
 const newPic = document.querySelector('.new');
+const pictureDiv = document.querySelector('.picture');
 
 document.addEventListener('DOMContentLoaded', function () {
   initialFormComment.style.display = 'none';
@@ -107,6 +108,8 @@ function relocationMenu(position, value) {
       };
     };
   };
+
+
 
 //Загрузка и проверка изображений
 const loadData = document.createElement('input');
@@ -234,8 +237,8 @@ function mainMenuMode() {
   commentsEl.style.display = 'none';
   draw.style.display = 'inline-block';
   drawEl.style.display = 'none';
-  paintMask.style.zIndex = 0;
   paintMask.style.display = 'none';
+  mask.style.zindex = 1;
   createCommentClickCheck();
   resetErrorMessage();
 }
@@ -292,7 +295,7 @@ function paintMode() {
   draw.style.display = 'inline-block';
   drawEl.style.display = 'inline-block';
   newPic.style.display = 'none';
-  paintMask.style.zIndex = 1;
+  paintMask.style.zIndex = 4;
   paintMask.style.display = 'block';
   createCommentClickCheck();
   resetErrorMessage();
@@ -398,11 +401,19 @@ function commentsMode() {
   drawEl.style.display = 'none';
   newPic.style.display = 'none';
   paintMask.style.display = 'none';
-  paintMask.style.zIndex = 0;
+  mask.style.zIndex = 3;
   resizeCanvas();
   resetErrorMessage();
   commentsToggle();
   commentsEl.addEventListener('click', commentsToggle);
+    if (mask.style.display == 'none') {
+      img.addEventListener('click', commentAdd);
+    } else {
+      mask.addEventListener('click', commentAdd);
+  };
+};
+
+function createCommentClickCheck() {
   if (mask.style.display == 'none') {
     img.addEventListener('click', commentAdd);
   } else {
@@ -410,16 +421,8 @@ function commentsMode() {
   };
 };
 
-function createCommentClickCheck() {
-  if (mask.style.display == 'none') {
-    img.removeEventListener('click', commentAdd);
-  } else {
-    mask.removeEventListener('click', commentAdd);
-  };
-};
-
 function commentsToggle() {
-  const commentsForm = wrap.querySelectorAll('[data-top]');
+  const commentsForm = document.querySelectorAll('[data-top]');
   for (let i = 0; i < commentsForm.length; i++) {
     if (document.querySelector('.menu__toggle').checked) {
       console.log('Комментарии показаны');
@@ -441,8 +444,8 @@ function commentAdd(event) {
       initialFormComment.style.display = 'none';
     });
   initialFormCommentLoader.style.display = 'none';
-  initialFormComment.style.left = (event.offsetX + img.getBoundingClientRect().left) - 20 + 'px'
-  initialFormComment.style.top = (event.offsetY + img.getBoundingClientRect().top) - 16 + 'px';
+  initialFormComment.style.left = (event.offsetX) - 20 + 'px'
+  initialFormComment.style.top = (event.offsetY) - 16 + 'px';
   initialFormComment.style.display = 'inline-block';
   initialFormComment.reset();
 };
@@ -507,8 +510,8 @@ function createComment(comment) {
   const closeButton = commentForm.querySelector('.comments__close');
   closeButton.addEventListener('click', function () {
     commentForm.querySelector('.comments__marker-checkbox').checked = false
-  });
-  wrap.appendChild(commentForm);
+  },false);
+  pictureDiv.appendChild(commentForm);
   commentsToggle();
 };
 
@@ -528,14 +531,14 @@ function renderCommentForm(loadForm, comment) {
 };
 
 function resetComment() {
-  const commentsArr = wrap.querySelectorAll('[data-top]');
+  const commentsArr = document.querySelectorAll('[data-top]');
   for (let i = 0; i < commentsArr.length; i++) {
-    wrap.removeChild(commentsArr[i]);
+    pictureDiv.removeChild(commentsArr[i]);
   };
 };
 
 //Отправка комментария
-wrap.addEventListener('submit', submitComment);
+pictureDiv.addEventListener('submit', submitComment, false);
 
 function submitComment(event) {
   event.preventDefault();
@@ -632,3 +635,8 @@ function wsConnect() {
     console.log(`Произошла ошибка: ${error.data}`);
   });
 };
+
+img.addEventListener('load', function() {
+  pictureDiv.style.width = (img.width) + 'px';
+  pictureDiv.style.height = (img.height) + 'px';
+});
