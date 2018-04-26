@@ -109,8 +109,6 @@ function relocationMenu(position, value) {
     };
   };
 
-
-
 //Загрузка и проверка изображений
 const loadData = document.createElement('input');
   loadData.type = 'file';
@@ -136,7 +134,6 @@ const newFileBtn = document.querySelector('.new');
       };
     });
   });
-
 
 const imgLoader = document.querySelector('.image-loader');
 const dropFiles = document.querySelector('body');
@@ -300,7 +297,6 @@ function paintMode() {
   createCommentClickCheck();
   resetErrorMessage();
   resizeCanvas();
-
   const initMouse = {
     x: 0,
     y: 0
@@ -312,6 +308,7 @@ function paintMode() {
   const ctx = canvas.getContext('2d');
     ctx.strokeStyle = 'green';
     ctx.lineWidth = 5;
+
   canvas.onmousedown = function (event) {
     initMouse.x = event.offsetX;
     initMouse.y = event.offsetY;
