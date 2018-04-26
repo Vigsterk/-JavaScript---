@@ -81,13 +81,12 @@ body {
   box-shadow: 0.1rem 0.17rem 1rem #000000;
 }
 
-#dropZone {
-  top: 1px;
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-Direction: row;
-  z-index: 1;
+.picture {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~ иконки на панели ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -625,6 +624,7 @@ body {
   max-width: 60rem;
   color: #fff;
   text-shadow: 0 0 0.2rem #000;
+  background-color: #384654;
 }
 
 .error__header {
@@ -635,14 +635,6 @@ body {
   font-size: 2rem;
   margin-top: 2rem;
   line-height: 130%;
-}
-
-#repeat-download {
-  background-color: #384654;
-}
-
-#server-error {
-  background-color: #384654;
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~ прелоадер ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
