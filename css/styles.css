@@ -89,6 +89,13 @@ body {
   display: block;
 }
 
+.hidden {
+  display: none;
+}
+
+.new {
+  display: inline-block;
+}
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~ иконки на панели ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .drag {
@@ -144,6 +151,16 @@ body {
   width: 27px;
   height: 30px;
   background-position: -56px -1px;
+}
+
+.new_pic-input {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
 }
 
 .comments-icon {
@@ -341,19 +358,17 @@ body {
   background-position: -110px 37px;
 }
 
-#paintMask {
-  background: rgba(255, 255, 255, 0);
+#paint-mask {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   position: absolute;
 }
 #mask {
-  background: rgba(255, 255, 255, 0);
-  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  position: absolute;
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~ комментировать ~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -705,41 +720,40 @@ body {
 }
 
 
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ переключения ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ initial ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-.menu[data-state="initial"] > .menu__item {
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ переключения ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ initial ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+.burger, .share, .share-tools, .comments, .comments-tools, .draw, .draw-tools {
   display: none;
 }
 
-.menu[data-state="initial"] > .menu__item.drag, .menu[data-state="initial"] > .menu__item.new, .menu[data-state="initial"] > .menu__item.burger {
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ drawMode ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+.app_drawMode .draw, .app_drawMode .draw-tools, .app_drawMode .burger  {
+  display: inline-block;
+}
+.app_drawMode .new {
+  display: none;
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ commentsMode ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+.app_commentsMode .comments, .app_commentsMode .comments-tools, .app_commentsMode .burger {
   display: inline-block;
 }
 
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ default ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-.menu[data-state="default"] > .menu__item.burger {
+.app_commentsMode .new {
   display: none;
 }
 
-.menu[data-state="default"] > .mode {
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ shareMode ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+.app_shareMode .share, .app_shareMode .share-tools, .app_shareMode .burger {
   display: inline-block;
 }
 
-.menu[data-state="default"] > .tools {
+.app_shareMode .new {
   display: none;
 }
 
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ selected ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-.menu[data-state="selected"] > .mode {
-  display: none;
-}
-
-.tool {
-  display: none;
-}
-
-.menu[data-state="selected"] > .menu__item[data-state="selected"], .menu__item[data-state="selected"] + .tool {
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ mainMenuMode ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+.app_menuMode .share, .app_menuMode .comments, .app_menuMode .draw, .app_menuMode .burger .app_menuMode .new {
   display: inline-block;
 }
