@@ -8,7 +8,7 @@
   </head>
 
   <body>
-    <div class="wrap app" data-state="initial">
+    <div class="wrap app">
       <ul class="menu">
         <li class="menu__item drag"></li>
 
@@ -19,9 +19,10 @@
         <li class="menu__item mode new">
           <i class="menu__icon new-icon"></i>
           <span class="menu__item-title">Загрузить<br>новое</span>
+          <input class="new_pic-input" type="file" accept=".jpg, .png" >
         </li>
 
-        <li class="menu__item mode comments" data-state="">
+        <li class="menu__item mode comments">
           <i class="menu__icon comments-icon"></i>
           <span class="menu__item-title">Комментарии</span>
         </li>
@@ -33,11 +34,11 @@
           </span>
         </li>
 
-        <li class="menu__item mode draw" data-state="">
+        <li class="menu__item mode draw">
           <i class="menu__icon draw-icon"></i>
           <span class="menu__item-title">Рисовать</span>
         </li>
-        <li class="menu__item tool draw-tools">
+        <li class="menu__item tool draw-tools" >
           <input class="menu__color red" type="radio" name="color" value="red"><span></span>
           <input class="menu__color yellow" type="radio" name="color" value="yellow"><span></span>
           <input class="menu__color green" type="radio" name="color" value="green" checked><span></span>
@@ -48,7 +49,7 @@
           </div>
         </li>
 
-        <li class="menu__item mode share" data-state="">
+        <li class="menu__item mode share">
           <i class="menu__icon share-icon"></i>
           <span class="menu__item-title">Поделиться</span>
         </li>
@@ -59,9 +60,9 @@
       </ul>
       <div class='picture'>
         <img class="current-image" src="">
-        <canvas id="paintMask" style="display: none;"></canvas>
-        <img id="mask" style="display: none;">
-        <form class="comments__form new_comment" style="z-index: 20;">
+        <canvas id="paint-mask" class="hidden"></canvas>
+        <img id="mask" class="hidden">
+        <form class="comments__form new_comment hidden" style="z-index: 20;">
           <span class="comments__marker"></span><input type="checkbox" class="comments__marker-checkbox" checked>
           <div class="comments__body">
             <div class="comment">
@@ -69,7 +70,7 @@
               <p class="comment__message"></p>
             </div>
 
-            <div class="comment comment_loader" style="display: none;">
+            <div class="comment comment_loader" hidden>
               <div class="loader">
                 <span></span>
                 <span></span>
@@ -84,20 +85,20 @@
           </div>
         </form>
       </div>
-      <div class="error" style="display: none;">
+      <div class="error hidden">
         <h4 class="error__header">Ошибка</h4>
         <p class="error__message">Неверный формат файла. Пожалуйста, выберите изображение в формате .jpg или .png.</p>
       </div>
-      <div class="error" id="repeat-download" style="display: none;">
+      <div class="error hidden" id="repeat-download">
         <h4 class="error__header">Ошибка</h4>
         <p class="error__message">Чтобы загрузить новое изображение, пожалуйста, воспользуйтесь пунктом <<Загрузить новое>> в меню.</p>
       </div>
-      <div class="error" id="server-error" style="display: none;">
+      <div class="error hidden" id="server-error">
         <h4 class="error__header">Ошибка</h4>
         <p class="error__message">Ошибка публикации! Попробуйте ещё раз или выберите другое изображение.</p>
       </div>
 
-      <div class="image-loader" style="display: none;">
+      <div class="image-loader hidden">
         <div class="loader">
           <span></span>
           <span></span>
