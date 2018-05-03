@@ -60,8 +60,8 @@
       </ul>
       <div class='picture'>
         <img class="current-image" src="">
-        <canvas id="paint-mask" class="hidden"></canvas>
-        <img id="mask" class="hidden">
+        <canvas class="paint-mask hidden"></canvas>
+        <img class="mask hidden">
         <form class="comments__form new_comment hidden" style="z-index: 20;">
           <span class="comments__marker"></span><input type="checkbox" class="comments__marker-checkbox" checked>
           <div class="comments__body">
@@ -89,11 +89,11 @@
         <h4 class="error__header">Ошибка</h4>
         <p class="error__message">Неверный формат файла. Пожалуйста, выберите изображение в формате .jpg или .png.</p>
       </div>
-      <div class="error hidden" id="repeat-download">
+      <div class="error repeat-download hidden">
         <h4 class="error__header">Ошибка</h4>
         <p class="error__message">Чтобы загрузить новое изображение, пожалуйста, воспользуйтесь пунктом <<Загрузить новое>> в меню.</p>
       </div>
-      <div class="error hidden" id="server-error">
+      <div class="error server-error hidden">
         <h4 class="error__header">Ошибка</h4>
         <p class="error__message">Ошибка публикации! Попробуйте ещё раз или выберите другое изображение.</p>
       </div>
