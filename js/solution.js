@@ -3,7 +3,7 @@ const app = document.querySelector('.app');
 const body = document.querySelector('body');
 const menu = document.querySelector('.menu');
 const img = document.querySelector('.current-image');
-const mask = document.querySelector('#mask');
+const mask = document.querySelector('.mask');
 const newPic = document.querySelector('.new');
 const pictureDiv = document.querySelector('.picture');
 
@@ -16,14 +16,8 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function getIdFromUrl(name) {
-  const imgHref = window.location.href;
-  if ((imgHref.indexOf('?id=')) == -1) {
-    return null;
-  } else {
-    const indexOfId = imgHref.indexOf('?id=') + 4;
-    const result = imgHref.substring(indexOfId);
-    return result;
-  };
+  const imgHref = window.location.search.split('?id=')[1];
+  return imgHref;
 };
 
 // Расположение блока меню
@@ -131,7 +125,7 @@ loadData.addEventListener('change', function (event) {
 const imgLoader = document.querySelector('.image-loader');
 const dropFiles = document.querySelector('body');
 const errorMsg = document.querySelector('.error');
-const repeatDownload = document.querySelector('#repeat-download');
+const repeatDownload = document.querySelector('.repeat-download');
 dropFiles.addEventListener('drop', onFilesDrop);
 dropFiles.addEventListener('dragover', event => event.preventDefault());
 img.setAttribute('new', '');
@@ -162,7 +156,7 @@ function resetErrorMessage() {
 };
 
 //Первичная загрузка на сервер
-const serverError = document.querySelector('#server-error');
+const serverError = document.querySelector('.server-error');
 
 function upload(file) {
   const formData = new FormData();
@@ -177,7 +171,7 @@ function upload(file) {
   fetch('https://neto-api.herokuapp.com/pic', {
       method: 'POST',
       body: formData
-    })
+})
     .then(response => {
       if (200 <= response.status && response.status < 300) {
         console.log(response);
@@ -255,7 +249,7 @@ function shareMode() {
 const draw = document.querySelector('.draw');
 const drawEl = document.querySelector('.draw-tools');
 const eraserEl = document.querySelector('.menu__eraser');
-const paintMask = document.querySelector('#paint-mask');
+const paintMask = document.querySelector('.paint-mask');
 
 draw.addEventListener('click', paintMode);
 
